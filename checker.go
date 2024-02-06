@@ -7,6 +7,7 @@ import (
 	"github.com/ikawaha/httpcheck"
 )
 
+// Checker is a struct that represents the GraphQL checker.
 type Checker struct {
 	client *httpcheck.Checker
 }

@@ -17,7 +17,7 @@ type Response struct {
 
 // String returns the string representation of the response.
 func (r Response) String() string {
-	b, _ := json.MarshalIndent(r, "", "  ")
+	b, _ := json.MarshalIndent(r, "", "  ") //nolint:errchkjson
 	return string(b)
 }
 

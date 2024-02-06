@@ -10,7 +10,7 @@ type Query struct {
 
 // String returns the string representation of the query.
 func (q Query) String() string {
-	b, _ := json.MarshalIndent(q, "", "  ")
+	b, _ := json.MarshalIndent(q, "", "  ") // nolint:errchkjson
 	return string(b)
 }
 
