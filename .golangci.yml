@@ -1,34 +1,6 @@
-run:
-
-issues:
-  exclude-use-default: false
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - gocyclo
-
+version: "2"
 linters:
-  enable:
-    - gocyclo
-    - staticcheck
-    - govet
-    - revive
-  disable:
-    - maligned
-    - exhaustive
-    - noctx
-    - asciicheck
-    - sqlclosecheck
-    - rowserrcheck
-    - gosec
-    - scopelint
-  presets:
-    - bugs
-    - unused
-    - format
-
-linters-settings:
-  gocyclo:
-    min-complexity: 15
-  errcheck:
-    ignore: fmt:.*,io/ioutil:^Read,^Close|^Write|^Shutdown
+  default: standard
+  settings:
+    gocyclo:
+      min-complexity: 15
