@@ -15,7 +15,7 @@ type Checker struct {
 // Option represents the option for the checker.
 type Option = httpcheck.Option
 
-// ClientTimeout sets the client timeout.
+// ClientTimeout sets the tester timeout.
 func ClientTimeout(d time.Duration) Option {
 	return httpcheck.ClientTimeout(d)
 }
