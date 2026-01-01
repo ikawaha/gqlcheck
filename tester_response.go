@@ -23,13 +23,19 @@ func (r Response) String() string {
 
 // Cb set a callback function to evaluate the response.
 func (tt *Tester) Cb(callback func(*http.Response)) {
-	tt.client.Cb(callback)
+	if !tt.requireCheck() {
+		return
+	}
+	tt.tester.Cb(callback)
 }
 
 // Response sets the response to the provided variable.
 func (tt *Tester) Response(out any) {
-	t := tt.client.T()
-	tt.client.Cb(func(resp *http.Response) {
+	if !tt.requireCheck() {
+		return
+	}
+	t := tt.tester.T()
+	tt.tester.Cb(func(resp *http.Response) {
 		b, err := io.ReadAll(resp.Body)
 		require.NoError(t, err)
 		assert.NoError(t, resp.Body.Close())
@@ -39,25 +45,50 @@ func (tt *Tester) Response(out any) {
 
 // HasErrors checks if the response contains errors.
 func (tt *Tester) HasErrors() *Tester {
-	return &Tester{client: tt.client.MatchesJSONQuery(`.errors`)}
+	if !tt.requireCheck() {
+		return tt
+	}
+	newTester := *tt // copy
+	newTester.tester = tt.tester.MatchesJSONQuery(`.errors`)
+	return &newTester
 }
 
 // HasNoErrors checks if the response does not contain errors.
 func (tt *Tester) HasNoErrors() *Tester {
-	return &Tester{client: tt.client.NotMatchesJSONQuery(`.errors`)}
+	if !tt.requireCheck() {
+		return tt
+	}
+	newTester := *tt // copy
+	newTester.tester = tt.tester.NotMatchesJSONQuery(`.errors`)
+	return &newTester
+}
+
+// HasNoError is an alias for HasNoErrors.
+func (tt *Tester) HasNoError() *Tester {
+	return tt.HasNoErrors()
 }
 
 // HasJSON checks if the response body has the provided value.
 func (tt *Tester) HasJSON(expected any) *Tester {
-	return &Tester{client: tt.client.HasJSON(expected)}
+	if !tt.requireCheck() {
+		return tt
+	}
+	newTester := *tt // copy
+	newTester.tester = tt.tester.HasJSON(expected)
+	return &newTester
 }
 
 // HasData checks if the response body has the provided data.
 func (tt *Tester) HasData(expected any) *Tester {
-	return &Tester{client: tt.client.HasJSON(map[string]any{"data": expected})}
+	return tt.HasJSON(map[string]any{"data": expected})
 }
 
 // ContainsString checks if the response body contains the provided string.
 func (tt *Tester) ContainsString(s string) *Tester {
-	return &Tester{client: tt.client.ContainsString(s)}
+	if !tt.requireCheck() {
+		return tt
+	}
+	newTester := *tt // copy
+	newTester.tester = tt.tester.ContainsString(s)
+	return &newTester
 }
